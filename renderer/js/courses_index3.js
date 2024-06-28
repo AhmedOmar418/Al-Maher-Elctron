@@ -1,5 +1,5 @@
 const {ipcRenderer} = require('electron')
-
+require('dotenv').config();
 function clearDataAndGoBack() {
     localStorage.removeItem('courseData3'); // Clear the data
     window.history.back(); // Go back
@@ -86,52 +86,101 @@ function callApiAndRedirect(id) {
         if(row.is_first === 'null'){
             ipcRenderer.send('print-message3', 'nulllllll');
 
-            fetch('https://al-maher.net/api/get_level1_data_ids_teach.php?tid=' + id)
+            fetch('https://al-maher.net/api/my_script.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "token": "cF9+j17aP+ff",
+                    "route": "courses_index3"
+                })
+            })
                 .then(response => response.json())
                 .then(data => {
-                    ipcRenderer.send('print-message3','dataaaaa',data)
+                    const url = data.url;
+                    const queryParams = `?tid=${id}&time=1693943375`;
+                    fetch(url + queryParams)
+                        .then(response => response.json())
+                        .then(data => {
+                            ipcRenderer.send('print-message3','dataaaaa',data)
 
-                    // Store the data in local storage so it can be accessed in the next page
-                    localStorage.setItem('courseData4', JSON.stringify(data));
-                    // Then redirect to the new page
-                    window.location.href = '../../renderer/courses/teachers.html';
+                            // Store the data in local storage so it can be accessed in the next page
+                            localStorage.setItem('courseData4', JSON.stringify(data));
+                            // Then redirect to the new page
+                            window.location.href = '../../renderer/courses/teachers.html';
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                .catch(error => console.error('Error fetching URL:', error));
         } else if(row.is_first.trim().toUpperCase() === 'NO'){
             ipcRenderer.send('print-message3', 'NOOOOO');
 
-            fetch('https://al-maher.net/api/get_level1_data_ids.php?tid=' + id)
+            fetch('https://al-maher.net/api/my_script.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "token": "cF9+j17aP+ff",
+                    "route": "courses_index1"
+                })
+            })
                 .then(response => response.json())
                 .then(data => {
-                    ipcRenderer.send('print-message3','not teachers')
-                    ipcRenderer.send('print-message3',data)
-                    ipcRenderer.send('print-message3',id)
+                    const url = data.url;
+                    const queryParams = `?tid=${id}&time=1693943375`;
+                    fetch(url + queryParams)
+                        .then(response => response.json())
+                        .then(data => {
+                            ipcRenderer.send('print-message3','not teachers')
+                            ipcRenderer.send('print-message3',data)
+                            ipcRenderer.send('print-message3',id)
 
-                    // Store the data in local storage so it can be accessed in the next page
-                    localStorage.setItem('courseData3', JSON.stringify(data));
-                    // Then redirect to the new page
-                    window.location.href = '../../renderer/courses/level4.html';
+                            // Store the data in local storage so it can be accessed in the next page
+                            localStorage.setItem('courseData3', JSON.stringify(data));
+                            // Then redirect to the new page
+                            window.location.href = '../../renderer/courses/level4.html';
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                .catch(error => console.error('Error fetching URL:', error));
         } else if(row.is_first.trim().toUpperCase() === 'YES'){
             ipcRenderer.send('print-message3', 'YEEEESSS');
-            fetch('https://al-maher.net/api/get_level1_data_ids.php?tid=' + id)
+
+            fetch('https://al-maher.net/api/my_script.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "token": "cF9+j17aP+ff",
+                    "route": "courses_index1"
+                })
+            })
                 .then(response => response.json())
                 .then(data => {
-                    ipcRenderer.send('print-message3','not teachers 2',data)
+                    const url = data.url;
+                    const queryParams = `?tid=${id}&time=1693943375`;
+                    fetch(url + queryParams)
+                        .then(response => response.json())
+                        .then(data => {
+                            ipcRenderer.send('print-message3','not teachers 2',data)
 
-                    // Store the data in local storage so it can be accessed in the next page
-                    localStorage.setItem('courseData2', JSON.stringify(data));
-                    // Then redirect to the new page
-                    window.location.href = '../../renderer/courses/level3.html';
+                            // Store the data in local storage so it can be accessed in the next page
+                            localStorage.setItem('courseData2', JSON.stringify(data));
+                            // Then redirect to the new page
+                            window.location.href = '../../renderer/courses/level3.html';
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                .catch(error => console.error('Error fetching URL:', error));
         }
     });
 }

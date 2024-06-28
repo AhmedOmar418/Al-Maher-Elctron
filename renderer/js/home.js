@@ -1,5 +1,5 @@
 const { ipcRenderer } = require('electron')
-
+require('dotenv').config();
 document.getElementById('signOutIcon').addEventListener('click', () => {
     ipcRenderer.send('close-app')
 })
@@ -31,14 +31,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function fetchSliderData() {
     const userId = localStorage.getItem('userId');
-    ipcRenderer.send('print-message3',userId);
-    fetch('http://al-maher.net/api/get_slider.php')
+    ipcRenderer.send('print-message3', userId);
+    fetch('https://al-maher.net/api/my_script.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "token": "cF9+j17aP+ff",
+            "route": "sliders"
+        })
+    })
         .then(response => response.json())
         .then(data => {
-            clearExistingCarouselItems();
-            createAndAppendCarouselItems(data.rows);
+            const url = data.url;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    clearExistingCarouselItems();
+                    createAndAppendCarouselItems(data.rows);
+                })
+                .catch(error => console.error('Error fetching slider data:', error));
         })
-        .catch(error => console.error('Error fetching slider data:', error));
+        .catch(error => console.error('Error fetching URL:', error));
 }
 
 function clearExistingCarouselItems() {
@@ -97,4 +112,3 @@ document.addEventListener('DOMContentLoaded', () => {
         profileDiv.style.display = 'none';
     }
 });
-

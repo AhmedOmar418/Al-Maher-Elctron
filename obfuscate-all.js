@@ -1,7 +1,9 @@
 const fs = require('fs');
 const glob = require('glob');
-const JavaScriptObfuscator = require('javascript-obfuscator');
 const { ipcRenderer } = require("electron");
+const asar = require('asar');
+const path = require('path');
+const JavaScriptObfuscator = require('javascript-obfuscator');
 
 // Specify the directory containing the JavaScript files
 const directoryPath = './renderer/js/';
@@ -10,28 +12,14 @@ const directoryPath = './renderer/js/';
 const files = glob.sync(directoryPath + '*.js');
 
 files.forEach(file => {
-    fs.readFile(file, "UTF8", function(err, data) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        const obfuscationResult = JavaScriptObfuscator.obfuscate(data, {
-            compact: true,
-            controlFlowFlattening: true,
-            controlFlowFlatteningThreshold: 1,
-            numbersToExpressions: true,
-            simplify: true,
-            shuffleStringArray: true,
-            splitStrings: true,
-            stringArrayThreshold: 1
-        });
+    // Read the JavaScript file
+    const fileContent = fs.readFileSync(file, 'utf8');
 
-        fs.writeFile(file, obfuscationResult.getObfuscatedCode(), function(err) {
-            if(err) {
-                return console.error(err);
-            }
-            console.log(`The file ${file} was obfuscated!`);
-            ipcRenderer.send('print-message3',`The file ${file} was obfuscated!`)
-        });
-    });
+    // Obfuscate the JavaScript file
+    const obfuscationResult = JavaScriptObfuscator.obfuscate(fileContent);
+
+    // Write the obfuscated code to the file
+    fs.writeFileSync(file, obfuscationResult.getObfuscatedCode());
+
+    console.log(`The file ${file} has been obfuscated.`);
 });

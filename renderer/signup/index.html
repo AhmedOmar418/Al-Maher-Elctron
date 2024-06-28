@@ -54,26 +54,6 @@
         100% { transform: rotate(360deg); }
     }
 </style>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const loginLink = document.getElementById('loginLink');
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent the default link behavior
-            const url = e.target.getAttribute('href'); // Get the URL to navigate to
-            window.location.href = url; // Navigate to the URL
-        });
-    });
-    document.addEventListener('DOMContentLoaded', () => {
-        const loginLink = document.getElementById('redirect_login');
-        loginLink.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent the default link behavior
-            const url = e.target.getAttribute('href'); // Get the URL to navigate to
-            window.location.href = url; // Navigate to the URL
-        });
-    });
-</script>
 </head>
 <body>
     <header class="fixed-header">

@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Menu, ipcMain, net, dialog } = require('electron');
 const { exec } = require('child_process');
 const Swal = require('sweetalert2');
-
+require('dotenv').config();
 
 let splash;
 let mainWindow;
@@ -42,7 +42,8 @@ function createMainWindow() {
     const https = require('https');
     let blockedApps = [];
 
-    https.get('https://al-maher.net/api/get_block_app.php', (res) => {
+    const url = "https://al-maher.net/api/get_block_app.php";
+    https.get(url, (res) => {
       let data = '';
       res.on('data', (chunk) => {
         data += chunk;
@@ -121,3 +122,4 @@ ipcMain.on('print-message3', (event, message) => {
 ipcMain.on('courses', (event, message) => {
   console.log(message);
 });
+

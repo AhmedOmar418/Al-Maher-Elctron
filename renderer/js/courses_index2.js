@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+require('dotenv').config();
 
 function clearDataAndGoBack() {
     localStorage.removeItem('courseData2'); // Clear the data
@@ -78,17 +79,31 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function callApiAndRedirect(id) {
-    // Call your API here using the id
-    // After the API call is done, redirect to the new page
-    fetch('https://al-maher.net/api/get_level1_data_ids.php?tid=' + id)
+    fetch('https://al-maher.net/api/my_script.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "token": "cF9+j17aP+ff",
+            "route": "courses_index1"
+        })
+    })
         .then(response => response.json())
         .then(data => {
-            // Store the data in local storage so it can be accessed in the next page
-            localStorage.setItem('courseData3', JSON.stringify(data));
-            // Then redirect to the new page
-            window.location.href = 'level4.html';
+            const url = data.url;
+            const queryParams = `?tid=${id}&time=1693943375`;
+            fetch(url + queryParams)
+                .then(response => response.json())
+                .then(data => {
+                    // Store the data in local storage so it can be accessed in the next page
+                    localStorage.setItem('courseData3', JSON.stringify(data));
+                    // Then redirect to the new page
+                    window.location.href = 'level4.html';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        .catch(error => console.error('Error fetching URL:', error));
 }
