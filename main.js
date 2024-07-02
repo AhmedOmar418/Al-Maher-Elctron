@@ -1,7 +1,9 @@
 const { app, BrowserWindow, Menu, ipcMain, net, dialog } = require('electron');
 const { exec } = require('child_process');
 const Swal = require('sweetalert2');
+const https = require("https");
 require('dotenv').config();
+const { session } = require('electron');
 
 let splash;
 let mainWindow;
@@ -20,9 +22,11 @@ function createMainWindow() {
     icon: 'ico_logo.ico',
     show: false,
     opacity: 0,
+    title: "Al-Maher",
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false // Disable web security
     }
   });
 
@@ -38,24 +42,59 @@ function createMainWindow() {
     splash.hide();
     mainWindow.show();
     mainWindow.setOpacity(1);
-
-    const https = require('https');
+    // mainWindow.webContents.openDevTools();
     let blockedApps = [];
 
-    const url = "https://al-maher.net/api/get_block_app.php";
-    https.get(url, (res) => {
+    const https = require('https');
+    const http = require('http');
+
+    const data = JSON.stringify({
+      token: "cF9+j17aP+ff",
+      route: "blocked_apps"
+    });
+
+    const options = {
+      hostname: 'al-maher.net',
+      path: '/api/my_script.php',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': data.length
+      }
+    };
+
+    const req = https.request(options, (res) => {
       let data = '';
       res.on('data', (chunk) => {
         data += chunk;
       });
       res.on('end', () => {
         const response = JSON.parse(data);
-        blockedApps = response.data;
+        const url = response.url;
+
+        https.get(url, (res) => {
+          data = '';
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            const response = JSON.parse(data);
+            blockedApps = response.data;
+          });
+        }).on("error", (err) => {
+          console.log("Error: " + err.message);
+        });
       });
-    }).on("error", (err) => {
-      console.log("Error: " + err.message);
     });
 
+    req.on('error', (error) => {
+      console.error(`Error: ${error.message}`);
+    });
+
+      req.write(data);
+    req.end();
+
+    blockedApps.push('AnyDesk.exe'); // Add 'anydesk' to the blockedApps array
     let intervalId = setInterval(() => {
       let cmd = process.platform === 'win32' ? 'tasklist' : 'ps -ax';
       exec(cmd, (err, stdout, stderr) => {
@@ -103,7 +142,18 @@ function createMainWindow() {
   });
 }
 
-app.whenReady().then(createMainWindow);
+app.whenReady().then(() => {
+  session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    if (details.url.includes('b-cdn.net')) {
+      details.requestHeaders['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Al-Maher/1.0.0 Chrome/126.0.6478.114 Electron/31.1.0 Safari/537.36';
+      details.requestHeaders['Referer'] = 'https://livepush.io/';
+      details.requestHeaders['Origin'] = 'https://livepush.io/';
+      details.requestHeaders['Host'] = 'vz-8e527d6d-f5c.b-cdn.net';
+    }
+    callback({ cancel: false, requestHeaders: details.requestHeaders });
+  });
+  createMainWindow();
+});
 
 Menu.setApplicationMenu(null);
 

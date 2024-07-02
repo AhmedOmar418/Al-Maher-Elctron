@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron')
+const Swal = require("sweetalert2");
 require('dotenv').config();
 function clearDataAndGoBack() {
     localStorage.removeItem('courseData4'); // Clear the data
@@ -149,9 +150,21 @@ if (userId) {
                                         })
                                         .catch(error => {
                                             console.error('Error:', error);
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: 'Something went wrong! Please Call Al-Maher Support',
+                                            });
                                         });
                                 })
-                                .catch(error => console.error('Error fetching URL:', error));
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Something went wrong! Please Call Al-Maher Support',
+                                    });
+                                });
                         }else {
                             // Redirect to a different page
                             localStorage.setItem('selectedTeacherId', id);
@@ -159,10 +172,22 @@ if (userId) {
                         }
                     })
                     .catch(error => {
-                        window.location.href = '../../renderer/card/card.html';
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong! Please Call Al-Maher Support',
+                        });
                     });
             })
-            .catch(error => console.error('Error fetching URL:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong! Please Call Al-Maher Support',
+                });
+            });
     }
 }else{
     window.location.href = '../../renderer/login/index.html';

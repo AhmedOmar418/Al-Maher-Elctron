@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+const Swal = require("sweetalert2");
 require('dotenv').config();
 document.getElementById('signOutIcon').addEventListener('click', () => {
     ipcRenderer.send('close-app')
@@ -90,6 +91,9 @@ function callApiAndRedirect(id) {
             fetch(url + queryParams)
                 .then(response => response.json())
                 .then(data => {
+                    ipcRenderer.send('print-message3', 'viiididddddddd');
+                    ipcRenderer.send('print-message3', data);
+
                     // Store the data in local storage so it can be accessed in the next page
                     localStorage.setItem('lessonVideo', JSON.stringify(data));
                     // Then redirect to the new page
@@ -97,7 +101,19 @@ function callApiAndRedirect(id) {
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong! Please Call Al-Maher Support',
+                    });
                 });
         })
-        .catch(error => console.error('Error fetching URL:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong! Please Call Al-Maher Support',
+            });
+        });
 }

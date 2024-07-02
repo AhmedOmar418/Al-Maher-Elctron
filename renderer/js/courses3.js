@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+const Swal = require("sweetalert2");
 require('dotenv').config();
 document.getElementById('signOutIcon').addEventListener('click', () => {
     ipcRenderer.send('close-app')
@@ -97,7 +98,19 @@ function callApiAndRedirect(id) {
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong! Please Call Al-Maher Support',
+                    });
                 });
         })
-        .catch(error => console.error('Error fetching URL:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong! Please Call Al-Maher Support',
+            });
+        });
 }

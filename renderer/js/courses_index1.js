@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+const Swal = require("sweetalert2");
 require('dotenv').config();
 function clearDataAndGoBack() {
     localStorage.removeItem('courseData1'); // Clear the data
@@ -101,7 +102,19 @@ function callApiAndRedirect(id) {
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong! Please Call Al-Maher Support',
+                    });
                 });
         })
-        .catch(error => console.error('Error fetching URL:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong! Please Call Al-Maher Support',
+            });
+        });
 }
