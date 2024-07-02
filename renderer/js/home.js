@@ -31,6 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function fetchSliderData() {
     const userId = localStorage.getItem('userId');
+    const spinner = document.getElementById('spinner');
+    spinner.style.display = 'block'; // Show the spinner
+
     ipcRenderer.send('print-message3', userId);
     fetch('https://al-maher.net/api/my_script.php', {
         method: 'POST',
@@ -48,6 +51,7 @@ function fetchSliderData() {
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
+                    spinner.style.display = 'none'; // Hide the spinner
                     clearExistingCarouselItems();
                     createAndAppendCarouselItems(data.rows);
                 })

@@ -80,7 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function callApiAndRedirect(id) {
     const courseData = JSON.parse(localStorage.getItem('courseData3')); // Retrieve course data from local storage
-
+    const spinner = document.getElementById('spinner');
+    spinner.style.display = 'block'; // Show the spinner
     courseData.rows.forEach(row => {
         ipcRenderer.send('print-message3', row)
 
@@ -104,18 +105,33 @@ function callApiAndRedirect(id) {
                     fetch(url + queryParams)
                         .then(response => response.json())
                         .then(data => {
-                            ipcRenderer.send('print-message3','dataaaaa',data)
+                            spinner.style.display = 'none'; // Hide the spinner
 
-                            // Store the data in local storage so it can be accessed in the next page
-                            localStorage.setItem('courseData4', JSON.stringify(data));
-                            // Then redirect to the new page
-                            window.location.href = '../../renderer/courses/teachers.html';
+
+
+                            if (data.rows && data.rows.msg === '0') {
+                                Swal.fire({
+                                    title: 'حدث خطأ ما',
+                                    text: 'يبدوا أنه لا تتوفر بيانات لهذه الدورة أو حدث خطأ ما يرجي التواصل مع الدعم الفني ',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            } else {
+                                ipcRenderer.send('print-message3','dataaaaa',data)
+
+                                // Store the data in local storage so it can be accessed in the next page
+                                localStorage.setItem('courseData4', JSON.stringify(data));
+                                // Then redirect to the new page
+                                window.location.href = '../../renderer/courses/teachers.html';
+                            }
                         })
                         .catch(error => {
-                            console.error('Error:', error);
+                            spinner.style.display = 'none'; // Hide the spinner
+                            Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error');
+
                         });
                 })
-                .catch(error => console.error('Error fetching URL:', error));
+                .catch(error =>  Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error'));
         } else if(row.is_first.trim().toUpperCase() === 'NO'){
             ipcRenderer.send('print-message3', 'NOOOOO');
 
@@ -136,6 +152,8 @@ function callApiAndRedirect(id) {
                     fetch(url + queryParams)
                         .then(response => response.json())
                         .then(data => {
+                            spinner.style.display = 'none'; // Hide the spinner
+
                             ipcRenderer.send('print-message3','not teachers')
                             ipcRenderer.send('print-message3',data)
                             ipcRenderer.send('print-message3',id)
@@ -146,10 +164,12 @@ function callApiAndRedirect(id) {
                             window.location.href = '../../renderer/courses/level4.html';
                         })
                         .catch(error => {
-                            console.error('Error:', error);
+                            spinner.style.display = 'none'; // Hide the spinner
+                            Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error');
+
                         });
                 })
-                .catch(error => console.error('Error fetching URL:', error));
+                .catch(error =>Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error'));
         } else if(row.is_first.trim().toUpperCase() === 'YES'){
             ipcRenderer.send('print-message3', 'YEEEESSS');
 
@@ -170,6 +190,8 @@ function callApiAndRedirect(id) {
                     fetch(url + queryParams)
                         .then(response => response.json())
                         .then(data => {
+                            spinner.style.display = 'none'; // Hide the spinner
+
                             ipcRenderer.send('print-message3','not teachers 2',data)
 
                             // Store the data in local storage so it can be accessed in the next page
@@ -178,21 +200,15 @@ function callApiAndRedirect(id) {
                             window.location.href = '../../renderer/courses/level3.html';
                         })
                         .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Something went wrong! Please Call Al-Maher Support',
-                            });
+                            spinner.style.display = 'none'; // Hide the spinner
+                            Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error');
+
                         });
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong! Please Call Al-Maher Support',
-                    });
+                    spinner.style.display = 'none'; // Hide the spinner
+
+                    Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error');
                 });
         }
     });

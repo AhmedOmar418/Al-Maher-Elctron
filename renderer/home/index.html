@@ -23,6 +23,30 @@
         overflow-x: hidden; /* Hide horizontal scrollbar */
 
     }
+    .loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 8px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 8px solid #3498db;
+        width: 60px;
+        height: 60px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+    }
+
+    /* Safari */
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 </style>
 </head>
 <body>
@@ -55,6 +79,9 @@
         </div>
     </div>
 </header>
+<div class="form-container" id="spinner" style="display: none;margin-top: 20px">
+    <div class="loader"></div>
+</div>
 <div style="margin-top: 40px;">
     <div class="row">
         <div class="col-3">
@@ -74,6 +101,7 @@
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
+
                 <a href="../../renderer/courses/index.html" style="text-decoration: none;" draggable="false">
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;margin-top: 20px">
                         <h3 style="color: rgb(0, 100, 194);" draggable="false">الدورات</h3>

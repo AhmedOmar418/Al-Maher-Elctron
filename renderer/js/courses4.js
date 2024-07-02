@@ -4,8 +4,9 @@ require('dotenv').config();
 document.getElementById('signOutIcon').addEventListener('click', () => {
     ipcRenderer.send('close-app')
 });
+
 document.addEventListener('DOMContentLoaded', () => {
-    const courseData = JSON.parse(localStorage.getItem('courseData')); // Retrieve course data from local storage
+    const courseData = JSON.parse(localStorage.getItem('courseData3')); // Retrieve course data from local storage
     const container = document.getElementById('container'); // Replace 'container' with the id of your container div
 
     courseData.rows.forEach(course => {
@@ -74,6 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function callApiAndRedirect(id) {
+    const spinner = document.getElementById('spinner');
+    spinner.style.display = 'block'; // Show the spinner
     fetch('https://al-maher.net/api/my_script.php', {
         method: 'POST',
         headers: {
@@ -91,29 +94,40 @@ function callApiAndRedirect(id) {
             fetch(url + queryParams)
                 .then(response => response.json())
                 .then(data => {
-                    ipcRenderer.send('print-message3', 'viiididddddddd');
-                    ipcRenderer.send('print-message3', data);
+                    spinner.style.display = 'none'; // Hide the spinner
 
-                    // Store the data in local storage so it can be accessed in the next page
-                    localStorage.setItem('lessonVideo', JSON.stringify(data));
-                    // Then redirect to the new page
-                    window.location.href = 'video.html';
+                    if (data.rows && data.rows.msg === '0') {
+                        Swal.fire({
+                            title: 'حدث خطأ ما',
+                            text: 'يبدوا أنه لا تتوفر بيانات لهذه الدورة أو حدث خطأ ما يرجي التواصل مع الدعم الفني ',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        ipcRenderer.send('print-message3', 'viiididddddddd');
+                        ipcRenderer.send('print-message3', data);
+
+                        // Store the data in local storage so it can be accessed in the next page
+                        localStorage.setItem('lessonVideo', JSON.stringify(data));
+                        // Then redirect to the new page
+                        window.location.href = 'video.html';
+                    }
+
+
+
                 })
                 .catch(error => {
+                    spinner.style.display = 'none'; // Hide the spinner
+
                     console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong! Please Call Al-Maher Support',
-                    });
+                    Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error');
+
                 });
         })
         .catch(error => {
+            spinner.style.display = 'none'; // Hide the spinner
             console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong! Please Call Al-Maher Support',
-            });
+            Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error');
+
         });
 }

@@ -96,6 +96,8 @@ const userId = localStorage.getItem('userId');
 ipcRenderer.send('print-message3',userId)
 if (userId) {
     function callApiAndRedirect(id) {
+        const spinner = document.getElementById('spinner');
+        spinner.style.display = 'block'; // Show the spinner
         // Get the user_id from local storage
         const userId = localStorage.getItem('userId');
         ipcRenderer.send('print-message3',userId)
@@ -119,6 +121,8 @@ if (userId) {
                 fetch(url + queryParams)
                     .then(response => response.json())
                     .then(userCourses => {
+                        spinner.style.display = 'none'; // Hide the spinner
+
                         ipcRenderer.send('print-message3', 'user coursesss')
                         ipcRenderer.send('print-message3', userCourses)
                         ipcRenderer.send('print-message3', id)
@@ -141,14 +145,30 @@ if (userId) {
                                     fetch(url + queryParams)
                                         .then(response => response.json())
                                         .then(data => {
-                                            ipcRenderer.send('print-message3', 'dataaaaa', data)
+                                            spinner.style.display = 'none'; // Hide the spinner
 
-                                            // Store the data in local storage so it can be accessed in the next page
-                                            localStorage.setItem('courseData', JSON.stringify(data));
-                                            // Then redirect to the new page
-                                            window.location.href = '../../renderer/user_courses/level2.html';
+
+
+                                            if (data.rows && data.rows.msg === '0') {
+                                                Swal.fire({
+                                                    title: 'حدث خطأ ما',
+                                                    text: 'يبدوا أنه لا تتوفر بيانات لهذه الدورة أو حدث خطأ ما يرجي التواصل مع الدعم الفني ',
+                                                    icon: 'error',
+                                                    confirmButtonText: 'OK'
+                                                });
+                                            } else {
+                                                ipcRenderer.send('print-message3', 'dataaaaa', data)
+
+                                                // Store the data in local storage so it can be accessed in the next page
+                                                localStorage.setItem('courseData', JSON.stringify(data));
+                                                // Then redirect to the new page
+                                                window.location.href = '../../renderer/user_courses/level2.html';
+                                            }
+
                                         })
                                         .catch(error => {
+                                            spinner.style.display = 'none'; // Hide the spinner
+
                                             console.error('Error:', error);
                                             Swal.fire({
                                                 icon: 'error',
@@ -158,6 +178,8 @@ if (userId) {
                                         });
                                 })
                                 .catch(error => {
+                                    spinner.style.display = 'none'; // Hide the spinner
+
                                     console.error('Error:', error);
                                     Swal.fire({
                                         icon: 'error',
@@ -172,6 +194,8 @@ if (userId) {
                         }
                     })
                     .catch(error => {
+                        spinner.style.display = 'none'; // Hide the spinner
+
                         console.error('Error:', error);
                         Swal.fire({
                             icon: 'error',
@@ -181,6 +205,8 @@ if (userId) {
                     });
             })
             .catch(error => {
+                spinner.style.display = 'none'; // Hide the spinner
+
                 console.error('Error:', error);
                 Swal.fire({
                     icon: 'error',

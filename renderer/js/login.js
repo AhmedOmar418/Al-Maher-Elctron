@@ -53,9 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                     .catch(error => {
                         spinner.style.display = 'none'; // Hide the spinner
+                        Swal.fire('فشل تسجيل الدخول', 'تأكد من بياناتك مجددا', 'error');
                         Swal.fire('Error', `An error occurred: ${error.message}`, 'error');
                     });
             })
-            .catch(error => console.error('Error fetching URL:', error));
+            .catch(error => {
+                spinner.style.display = 'none'; // Hide the spinner
+                Swal.fire('فشل تسجيل الدخول', 'تأكد من بياناتك مجددا', 'error');
+            });
     });
 });

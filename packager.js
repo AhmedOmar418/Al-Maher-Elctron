@@ -9,6 +9,7 @@ packager({
     platform: 'win32',
     arch: 'x64',
     electronVersion: '21.4.4',
+    icon: 'logo.ico', // specify the icon file
     // other options...
 }).then(() => {
     console.log('Packaging completed');

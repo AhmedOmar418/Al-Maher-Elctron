@@ -9,12 +9,13 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "package": "electron-packager . --arch=x64",
-    "make": "electron-packager . --arch=x64"
+    "make": "electron-packager . --arch=x64",
+    "create-installer-windows": "node createInstaller.js"
   },
   "build": {
     "appId": "com.yourcompany.yourapp",
     "win": {
-      "target": "nsis",
+      "msi": true,
       "icon": "logo.ico",
       "arch": [
         "x64"
@@ -35,15 +36,10 @@
     "javascript-obfuscator": "^4.1.1"
   },
   "dependencies": {
-    "axios": "^1.7.2",
-    "crypto-js": "^4.2.0",
+    "asar": "^3.2.0",
     "dotenv": "^16.4.5",
-    "electron-squirrel-startup": "^1.0.1",
-    "electron-store": "^9.0.0",
     "hls.js": "^1.5.11",
     "node-fetch": "^2.6.0",
-    "ps-list": "^2.1.1",
-    "spin.js": "^4.1.1",
     "sweetalert2": "^11.11.1",
     "update-electron-app": "^3.0.0"
   }

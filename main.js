@@ -7,6 +7,7 @@ const { session } = require('electron');
 
 let splash;
 let mainWindow;
+let loadingWindow;
 
 function createMainWindow() {
   splash = new BrowserWindow({
@@ -27,7 +28,7 @@ function createMainWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       webSecurity: false // Disable web security
-    }
+    },
   });
 
   mainWindow.on('focus', () => {

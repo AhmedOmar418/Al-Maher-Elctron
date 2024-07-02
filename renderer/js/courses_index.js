@@ -8,7 +8,8 @@ document.getElementById('signOutIcon').addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     const userId = localStorage.getItem('userId'); // Retrieve user id from local storage
-
+    const spinner = document.getElementById('spinner');
+    spinner.style.display = 'block'; // Show the spinner
     fetch('https://al-maher.net/api/my_script.php', {
         method: 'POST',
         headers: {
@@ -26,80 +27,98 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch(url + queryParams)
                 .then(response => response.json())
                 .then(data => {
-                    // Assuming data is an array of courses
-                    const container = document.getElementById('container'); // Replace 'container' with the id of your container div
-                    data.rows.forEach(course => {
-                        const card = document.createElement('div');
-                        card.className = "card m-3 border-0";
-                        card.style.width = "24rem";
+                    spinner.style.display = 'none'; // Hide the spinner
 
-                        const link = document.createElement('a');
-                        link.draggable = false;
-                        link.href = ""; // Use the course tax_tid as the URL
 
-                        link.addEventListener('click', (event) => {
-                            event.preventDefault();
-                            callApiAndRedirect(course.tax_tid);
+                    if (data.rows && data.rows.msg === '0') {
+                        Swal.fire({
+                            title: 'حدث خطأ ما',
+                            text: 'يبدوا أنه لا تتوفر بيانات لهذه الدورة أو حدث خطأ ما يرجي التواصل مع الدعم الفني ',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
                         });
+                    } else {
+
+                        // Assuming data is an array of courses
+                        const container = document.getElementById('container'); // Replace 'container' with the id of your container div
+                        data.rows.forEach(course => {
+                            const card = document.createElement('div');
+                            card.className = "card m-3 border-0";
+                            card.style.width = "24rem";
+
+                            const link = document.createElement('a');
+                            link.draggable = false;
+                            link.href = ""; // Use the course tax_tid as the URL
+
+                            link.addEventListener('click', (event) => {
+                                event.preventDefault();
+                                callApiAndRedirect(course.tax_tid);
+                            });
 
 
-                        const img = document.createElement('img');
-                        img.className = "card-img-top";
-                        img.src = "../../assets/class_select.jpg"; // Use the actual image source
-                        img.alt = "Course image";
+                            const img = document.createElement('img');
+                            img.className = "card-img-top";
+                            img.src = "../../assets/class_select.jpg"; // Use the actual image source
+                            img.alt = "Course image";
 
-                        const cardBody = document.createElement('div');
-                        cardBody.className = "card-body";
+                            const cardBody = document.createElement('div');
+                            cardBody.className = "card-body";
 
-                        const innerDiv = document.createElement('div');
-                        innerDiv.className = "col-12 col-md-12 col-lg-12 mx-auto";
+                            const innerDiv = document.createElement('div');
+                            innerDiv.className = "col-12 col-md-12 col-lg-12 mx-auto";
 
-                        const titleLink = document.createElement('a');
-                        titleLink.draggable = false;
-                        titleLink.href = ""; // Use the course tax_tid as the URL
-                        titleLink.style.textDecoration = "none";
+                            const titleLink = document.createElement('a');
+                            titleLink.draggable = false;
+                            titleLink.href = ""; // Use the course tax_tid as the URL
+                            titleLink.style.textDecoration = "none";
 
-                        titleLink.addEventListener('click', (event) => {
-                            event.preventDefault();
-                            callApiAndRedirect(course.tax_tid);
+                            titleLink.addEventListener('click', (event) => {
+                                event.preventDefault();
+                                callApiAndRedirect(course.tax_tid);
+                            });
+
+                            const title = document.createElement('h5');
+                            title.className = "card-title text-center text-black";
+                            title.textContent = course.tax_name; // Use the actual course name
+
+                            const btn = document.createElement('a');
+                            btn.draggable = false;
+                            btn.href = ""; // Use the course tax_tid as the URL
+                            btn.className = "btn btn-primary";
+                            btn.style.width = "100%";
+                            btn.textContent = "أختر";
+
+
+                            btn.addEventListener('click', (event) => {
+                                event.preventDefault();
+                                callApiAndRedirect(course.tax_tid);
+                            });
+
+                            titleLink.appendChild(title);
+                            innerDiv.appendChild(titleLink);
+                            innerDiv.appendChild(btn);
+                            cardBody.appendChild(innerDiv);
+                            link.appendChild(img);
+                            link.appendChild(cardBody);
+                            card.appendChild(link);
+
+                            container.appendChild(card);
                         });
-
-                        const title = document.createElement('h5');
-                        title.className = "card-title text-center text-black";
-                        title.textContent = course.tax_name; // Use the actual course name
-
-                        const btn = document.createElement('a');
-                        btn.draggable = false;
-                        btn.href = ""; // Use the course tax_tid as the URL
-                        btn.className = "btn btn-primary";
-                        btn.style.width = "100%";
-                        btn.textContent = "أختر";
+                    }
 
 
-                        btn.addEventListener('click', (event) => {
-                            event.preventDefault();
-                            callApiAndRedirect(course.tax_tid);
-                        });
-
-                        titleLink.appendChild(title);
-                        innerDiv.appendChild(titleLink);
-                        innerDiv.appendChild(btn);
-                        cardBody.appendChild(innerDiv);
-                        link.appendChild(img);
-                        link.appendChild(cardBody);
-                        card.appendChild(link);
-
-                        container.appendChild(card);
-                    });
                 })
                 .catch(error => {
-                    Swal.fire('Error', `An error occurred: ${error.message}`, 'error');
+                    spinner.style.display = 'none'; // Hide the spinner
+                    Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error');
                 });
         })
-        .catch(error => Swal.fire('Error', `Error fetching URL: ${error.message}`, 'error'));
+        .catch(error => Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error'));
 });
 
 function callApiAndRedirect(id) {
+    const spinner = document.getElementById('spinner');
+    spinner.style.display = 'block'; // Show the spinner
     fetch('https://al-maher.net/api/my_script.php', {
         method: 'POST',
         headers: {
@@ -117,26 +136,31 @@ function callApiAndRedirect(id) {
             fetch(url + queryParams)
                 .then(response => response.json())
                 .then(data => {
-                    // Store the data in local storage so it can be accessed in the next page
-                    localStorage.setItem('courseData1', JSON.stringify(data));
-                    // Then redirect to the new page
-                    window.location.href = '../../renderer/courses/level2.html';
+                    spinner.style.display = 'none'; // Hide the spinner
+
+
+                    if (data.rows && data.rows.msg === '0') {
+                        Swal.fire({
+                            title: 'حدث خطأ ما',
+                            text: 'يبدوا أنه لا تتوفر بيانات لهذه الدورة أو حدث خطأ ما يرجي التواصل مع الدعم الفني ',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        // Store the data in local storage so it can be accessed in the next page
+                        localStorage.setItem('courseData1', JSON.stringify(data));
+                        // Then redirect to the new page
+                        window.location.href = '../../renderer/courses/level2.html';
+                    }
+
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong! Please Call Al-Maher Support',
-                    });
+                    spinner.style.display = 'none'; // Hide the spinner
+                    Swal.fire('حدث خطأ ما', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error');
                 });
         })
         .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong! Please Call Al-Maher Support',
-            });
+            spinner.style.display = 'none'; // Hide the spinner
+            Swal.fire('حدث خطأ ما  ', ' يرجي المحاولة مجددا أو تواصل مع الدعم الفني ', 'error');
         });
 }

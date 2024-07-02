@@ -25,6 +25,32 @@
         a {
             text-decoration: none !important;
         }
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            width: 60px;
+            height: 60px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+            z-index: 2000; /* Add this line */
+
+        }
+
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 
 
@@ -45,6 +71,9 @@
         </a>
     </div>
 </header>
+<div class="form-container" id="spinner" style="display: none;margin-top: 20px">
+    <div class="loader"></div>
+</div>
 <div class="d-flex align-items-center justify-content-center">
     <div class="row justify-content-center">
         <div class="col-md-12">
